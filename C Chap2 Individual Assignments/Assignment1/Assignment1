@@ -1,10 +1,105 @@
-<!-- ### 필수 구현 기능
+#define _CRT_SECURE_NO_WARNINGS // Visual Studio scanf 에러 방지
+#include <stdio.h>
 
----
+// 4. 포션 시스템 함수 정의
+void setPotion(int count, int* p_HPPotion, int* p_MPPotion) {
+    // 포인터(*)를 사용해 main에 있는 진짜 포션 개수를 직접 수정합니다.
+    *p_HPPotion = count;
+    *p_MPPotion = count;
+}
 
-1. **캐릭터 스탯 상자 만들기**
-    - [ ]  `int`형 배열을 사용하여 **HP, MP, 공격력, 방어력**을 int형 배열로 선언하고, 0으로 초기화 합니다.
-        - 예시) 배열 이름이 status라면 status[0]은 HP, status[1]은 MP, status[3]은 방어력 -->
+int main() {
+    // 1. 캐릭터 스탯 상자 만들기 (0으로 초기화)
+    // 0:HP, 1:MP, 2:공격력, 3:방어력
+    int status[4] = { 0, 0, 0, 0 };
 
-int main()
-    int HP[]=0
+    // 포션 개수 변수 (초기값 0)
+    int hp_potion = 0;
+    int mp_potion = 0;
+
+    // 2. 깐깐한 입력 검사
+    // HP와 MP 입력 (둘 중 하나라도 50 이하이면 무한 반복)
+    printf("HP와 MP를 입력하세요 (둘 다 50 초과여야 함): ");
+    scanf("%d %d", &status[0], &status[1]);
+
+    while (status[0] <= 50 || status[1] <= 50) {
+        printf("하나라도 50 이하면 안 됩니다! 다시 입력: ");
+        scanf("%d %d", &status[0], &status[1]);
+    }
+
+    // 공격력과 방어력 입력 (둘 중 하나라도 0 이하이면 무한 반복)
+    printf("공격력과 방어력을 입력하세요 (둘 다 0 초과여야 함): ");
+    scanf("%d %d", &status[2], &status[3]);
+
+    while (status[2] <= 0 || status[3] <= 0) {
+        printf("하나라도 0 이하면 안 됩니다! 다시 입력: ");
+        scanf("%d %d", &status[2], &status[3]);
+    }
+
+    // 포션 초기 지급 (함수 호출)
+    setPotion(5, &hp_potion, &mp_potion);
+
+    // 3. 메뉴판 무한 루프
+    int choice = -1;
+    while (choice != 0) {
+        printf("\n--- 메뉴 선택 ---\n");
+        printf("1.MP UP / 2.HP UP / 3.공격력 UP / 4.방어력 UP / 5.현재 능력치 / 6.Level Up / 0.나가기\n");
+        printf("선택: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+        case 1: // MP 포션 사용 (기획안 요구사항 반영)
+            if (mp_potion > 0) {
+                status[1] += 20;
+                mp_potion--;
+                printf("MP가 20 올랐습니다! (남은 MP포션: %d)\n", mp_potion);
+            }
+            else {
+                printf("MP 포션이 부족합니다!\n");
+            }
+            break;
+
+        case 2: // HP 포션 사용
+            if (hp_potion > 0) {
+                status[0] += 20;
+                hp_potion--;
+                printf("HP가 20 올랐습니다! (남은 HP포션: %d)\n", hp_potion);
+            }
+            else {
+                printf("HP 포션이 부족합니다!\n");
+            }
+            break;
+
+        case 3: // 공격력 2배
+            status[2] *= 2;
+            printf("공격력이 2배가 되어 %d이 되었습니다!\n", status[2]);
+            break;
+
+        case 4: // 방어력 2배
+            status[3] *= 2;
+            printf("방어력이 2배가 되어 %d이 되었습니다!\n", status[3]);
+            break;
+
+        case 5: // 현재 능력치 출력
+            printf("\n[현재 능력치] HP:%d, MP:%d, 공:%d, 방:%d\n", status[0], status[1], status[2], status[3]);
+            printf("[남은 포션] HP포션:%d, MP포션:%d\n", hp_potion, mp_potion);
+            break;
+
+        case 6: // 레벨 업 (포션 +1)
+            hp_potion++;
+            mp_potion++;
+            printf("레벨 업! 포션을 각각 1개씩 추가 지급합니다.\n");
+            break;
+
+        case 0:
+            printf("프로그램을 종료합니다.\n");
+            break;
+
+        default:
+            printf("잘못된 번호입니다. 다시 선택하세요.\n");
+            break;
+        }
+    }
+
+    return 0;
+}
