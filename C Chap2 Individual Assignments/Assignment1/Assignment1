@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 
-// 4. 포션 시스템 함수 정의
+
 void setPotion(int count, int* p_HPPotion, int* p_MPPotion) {
 
     *p_HPPotion = count;
